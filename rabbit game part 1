@@ -1,0 +1,383 @@
+package rabbitgamepart1;
+import java.util.Random;
+import java.util.Scanner;
+
+
+/**
+ *
+ * @author iremcelik
+ */
+public class RabbitGamePart1 {
+static int S ;
+static String PLAYER ="";
+static int point = 0; 
+static int carrotC = 0; 
+static int rabbitC = 0 ; 
+static int ratC = 0 ;
+    public static void main(String[] args) {
+        //determineArea(6);
+        Scanner input = new Scanner(System.in);
+        System.out.println("Enter number of the game area : ");
+        S = input.nextInt();
+        String carrots= "Carrot Locations : \n";
+        for (int i = 1; i <= S ; i++) { // lines and Sth
+            
+            for (int b = ((S-i-1)*3)+(i)+((S-i)*3+1) ; b >= 0 ; --b) {  // this prints a pyramid-shape based on the given number S (more accurate if S<10)
+                System.out.print(" ");
+            }
+            for (int j = 1 ; j <= 2*i-1 ; j++) {
+                 if (j%2==0 ) {
+                    carrots+= "("+ i +","+j+")\n"; 
+                }
+                 else ;
+                System.out.print(i+","+j);
+                if (j!=2*i-1) {
+                    System.out.print("  ");
+                }
+                else;
+            }
+            for (int b = ((S-i-1)*3)+(i)+((S-i)*3+1) ; b >= 0 ; --b) {
+                System.out.print(" ");
+            }
+                
+        
+            System.out.println("");
+            
+        }
+        
+        String rabbits= "\nRabbits Locations : \n" ; 
+        Random random= new Random();
+        int i_rabbit1 ;
+        int j_rabbit1 ;
+        int i_rabbit2 ;
+        int j_rabbit2 ;
+        int i_rabbit3 ;
+        int j_rabbit3 ;
+        //for (int i = 0; i<3; i++) {
+            i_rabbit1 = random.nextInt(S)+1;
+            j_rabbit1 = random.nextInt(i_rabbit1*2-1)+1;
+            rabbits += "("+ i_rabbit1 +","+j_rabbit1+")\n";
+            i_rabbit2 = random.nextInt(S)+1;
+            j_rabbit2 = random.nextInt(i_rabbit2*2-1)+1;
+            rabbits += "("+ i_rabbit2 +","+j_rabbit2+")\n";
+            i_rabbit3 = random.nextInt(S)+1;
+            j_rabbit3 = random.nextInt(i_rabbit3*2-1)+1;
+            rabbits += "("+ i_rabbit3 +","+j_rabbit3+")\n";
+            
+        String rats = "\nRats locations : \n" ; 
+        int i_rat1;
+        int j_rat1;
+        int i_rat2;
+        int j_rat2;
+        //for (int i = 0; i<2; i++) {
+            i_rat1 = random.nextInt(S)+1;
+            j_rat1 = random.nextInt(i_rat1*2-1)+1;
+            rats += "("+ i_rat1 +","+j_rat1+")\n";
+            i_rat2 = random.nextInt(S)+1;
+            j_rat2 = random.nextInt(i_rat2*2-1)+1;
+            rats += "("+ i_rat1 +","+j_rat2+")\n";
+           
+        System.out.println(carrots);
+        
+        String HELL = "\nHell exit : ";
+        int i_hell = random.nextInt(S)+1;
+        int j_hell = random.nextInt(i_hell*2-1)+1;
+        String HEAVEN = "Heaven location : ";
+        int i_heaven = random.nextInt(S)+1;
+        int j_heaven = random.nextInt(i_heaven*2-1)+1;
+        HELL += "("+ i_hell +","+j_hell+")";
+        HEAVEN += "("+ i_heaven +","+j_heaven+")";
+        System.out.println(HELL);
+        System.out.println(HEAVEN);
+        
+        
+        System.out.println("Game Rules: \n1- When you are in a location having a carrot, you must answer the math question correctly. Otherwise, you cannot have the carrot.\n2- When you are in a location having a rabbit, you can pet them. But you have to feed them 1 of your carrots !  \n3- You lose 2 of your carrots if you are in a location having rats. \n4- You receive a game point in every 3 carrots. \n5- If you have no carrot to give, you loose 1 point for each. \nGOOD LUCK !!!");
+        int i_PLAYER = random.nextInt(S)+1;
+        int j_PLAYER = random.nextInt(i_PLAYER*2-1)+1;
+        PLAYER += "("+ i_PLAYER +","+j_PLAYER+")";
+        System.out.println("\nYour start location: ");
+        System.out.println(PLAYER);
+        //System.out.println(carrots);
+        while (!exitToHell(i_hell, j_hell, i_PLAYER, j_PLAYER) || !exitToHeaven(i_heaven, j_heaven, i_PLAYER, j_PLAYER)){
+            //System.out.println("Your current location : " + "(" + i_PLAYER+","+j_PLAYER+")");
+            System.out.println("\n\nWhere do you want to go ?\n");
+            whereToGo();
+            int direction=input.nextInt();
+            move(i_PLAYER, j_PLAYER, direction);
+            
+            
+            if (isThereACarrot(i_PLAYER, j_PLAYER)) {
+                System.out.println("A carrot ! ");
+                
+                
+                if (generateAQuestion(4)) {
+                    point++;
+                    carrotC++;
+                    System.out.println("Correct answer. You won a carrot ! ");
+                }
+                else {
+                    point--;
+                    System.out.println("Wrong answer. -1 point . ");
+                }
+            }
+            if (isThereARabit(i_rabbit1,j_rabbit1,i_rabbit2,j_rabbit2,i_rabbit3,j_rabbit3, i_PLAYER,  j_PLAYER)) {
+                System.out.println("There is a rabbit ! ");
+                rabbitC++;
+                if (carrotC==0) {
+                    --point;
+                    System.out.println("You have no carrot to feed the rabbit. -1 Point . ");
+                }
+                else if (carrotC>0) {
+                    System.out.println("You fed the rabbit. -1 Carrot. ");
+                    carrotC--;
+                }
+                else;
+            }  
+            if (isThereARat(i_rat1,j_rat1,i_rat2,j_rat2, i_PLAYER, j_PLAYER)) {
+                System.out.println("There is a rat ! ");
+                point--;
+                ratC++;
+                if (carrotC<2) {
+                    point-=2;
+                    System.out.println("You don't have enough carrot to give. -2 point. ");
+                }
+                else if (carrotC>2) {
+                    System.out.println("Rat ate 2 of your carrots. ");
+                    carrotC-=2;
+                }
+                else;
+            }
+           
+            if (carrotC%3==0) {
+                point++;
+            }
+            else ;
+            results();
+            
+        }
+        if (exitToHell(i_hell,j_hell,i_PLAYER, j_PLAYER)) {
+            System.out.println("You are in the Hell exit ! \nYou lost all your carrots :( " );
+            results();
+        }
+        else if (exitToHeaven(i_heaven,j_heaven,i_PLAYER, j_PLAYER)){
+            System.out.println("You reached the heaven exit !!! You WON. ");
+            results(); 
+        }
+        
+    }
+    
+    static void determineArea(int S){//FIRST CUSTOM METHOD 
+        for (int i = 1; i <= S ; i++) { // lines and Sth
+            
+            for (int b = ((S-i-1)*3)+(i)+((S-i)*3+1) ; b >= 0 ; --b) {  // this prints a pyramid-shape based on the given number S (more accurate if S<10)
+                System.out.print(" ");
+            }
+            for (int j = 1 ; j <= 2*i-1 ; j++) {
+                 
+                
+                System.out.print(i+","+j);
+                if (j!=2*i-1) {
+                    System.out.print("  ");
+                }
+                else;
+            }
+            for (int b = ((S-i-1)*3)+(i)+((S-i)*3+1) ; b >= 0 ; --b) {
+                System.out.print(" ");
+            }
+                
+        
+            System.out.println("");
+            
+        }
+    }
+    
+    
+    static boolean isThereARabit(int i1, int j1, int i2, int j2, int i3, int j3, int i_player, int j_player){
+        if (i1==i_player && j1==j_player) {
+           return true; 
+        }
+        else if (i2==i_player && j2==j_player) {
+           return true; 
+        }
+        else if (i3==i_player && j3==j_player) {
+           return true; 
+        }
+        return false ; 
+    }
+    static boolean isThereARat(int i1, int j1, int i2, int j2, int i_player, int j_player){
+        if (i1==i_player && j1==j_player) {
+           return true; 
+        }
+        else if (i2==i_player && j2==j_player) {
+           return true; 
+        }
+        return false ; 
+    }
+    static boolean isThereACarrot(int i_player, int j_player){
+        if (j_player%2==0 ) {
+            return true;
+        }
+        return false ; 
+    }
+    
+  
+    
+    static boolean exitToHeaven(int i1, int j1, int i_player, int j_player){
+        if (i1== i_player && j1==j_player) {
+            return true; 
+        }
+        return false ;
+    }
+    static boolean exitToHell(int i1, int j1, int i_player, int j_player){
+        if (i1== i_player && j1==j_player) {
+            return true; 
+        }
+        return false ;
+    }
+    static boolean canMove(int i_player, int j_player, int direction){
+        
+        if (direction==8 && (i_player==1 || j_player==1)) {//up
+            return false; 
+        }
+        else if (direction==4 && j_player==1) {//left
+            return false ; 
+        }
+        else if (direction==6 && j_player==((2*i_player)-1)) {//right
+            return false; 
+        }
+        else if (direction==2 && i_player==S) {//down
+            return false; 
+        }
+        else return true ; 
+    }
+    static boolean generateAQuestion(int type){
+        Scanner input=new Scanner(System.in);
+        Random r = new Random();
+        int o1=r.nextInt(100);
+        int o2=r.nextInt(100);
+        type=r.nextInt(type);
+        if (type==0) {
+                int case_0 =  o1+o2 ;
+                System.out.println("\nWhat is " + o1 + " + " + o2 + " ?");
+                int answer0=input.nextInt();
+                if (answer0==case_0) {
+                    return true; 
+                    
+                }
+                else {
+                    return false ;
+                }
+        }
+        else if (type==1) {
+                int case_1 =  o1-o2 ;
+                System.out.println("\nWhat is " + o1 + " - " + o2 + " ?");
+                int answer1=input.nextInt();
+                if (answer1==case_1) {
+                    return true; 
+                }
+                else {
+                    return false ;
+                } 
+        }
+        else if (type==2) {
+                int case_2 =  (o1/o2) + (o1%o2) ;
+                System.out.println("\nWhat is " + o1 + " / " + o2 + " ?");
+                int answer2=input.nextInt();
+                if (answer2==case_2) {
+                    return true; 
+                }
+                else {
+                    return false;
+                }
+                
+        }
+        else if (type==3) {
+            int case_3 =  o1*o2 ;
+                System.out.println("\nWhat is " + o1 + " x " + o2 + " ?");
+                int answer3=input.nextInt();
+                if (answer3==case_3) {
+                    return true; 
+                }
+                else {
+                    return false ;
+                }
+        }
+        else {
+            return false ;
+        } 
+         
+    }
+    
+    static void whereToGo(){//↑ ↓ → ← SECOND CUSTOM METHOD
+         
+            
+        for (int i = 0; i < 3; i++) {
+           
+            
+            if (i==0) {
+                System.out.println("         Press 8");
+                System.out.print("            ↑");
+            }
+            if (i==1) {
+                System.out.print("Press 4");
+                System.out.print("   ←   →");
+                System.out.print("  Press 6");
+            }
+            if (i==2) {
+                
+                System.out.println("            ↓");
+                System.out.println("         Press 2");
+            }
+            System.out.println("");
+        }
+       
+    }
+    static void move(int i_PLAYER, int j_PLAYER, int direction){ // THIRD CUSTOM METHOD
+       Scanner input=new Scanner(System.in);
+       
+        if (canMove(i_PLAYER, j_PLAYER, direction)) {
+            if (direction==8 ) {//up
+                i_PLAYER=i_PLAYER-1;
+                j_PLAYER=j_PLAYER-1;
+                PLAYER+=  "("+ i_PLAYER +","+j_PLAYER+")";
+            }
+            else if (direction==4 ) {//left
+                j_PLAYER=j_PLAYER-1;
+                PLAYER+=  "("+ i_PLAYER +","+j_PLAYER+")";
+            }
+            else if (direction==6 ) {//right
+                j_PLAYER=j_PLAYER+1;
+                PLAYER+=  "("+ i_PLAYER +","+j_PLAYER+")";
+            }
+            else if (direction==2 ) {//down
+                i_PLAYER=i_PLAYER+1;
+                j_PLAYER=j_PLAYER+1;
+                PLAYER+=  "("+ i_PLAYER +","+j_PLAYER+")";
+        }
+            else{
+                System.out.println(i_PLAYER + "," + j_PLAYER);
+            }
+        }
+        else {
+            while(canMove(i_PLAYER, j_PLAYER, direction)==false){
+            System.out.println("Please choose a different direction. ");
+            determineArea(S);
+            direction=input.nextInt();
+            canMove(i_PLAYER, j_PLAYER, direction);
+        }
+        }
+        
+        
+    }
+    static void results(){//FOURTH CUSTOM METHOD
+        System.out.println("");
+        System.out.println("Your path: " + PLAYER);
+        System.out.println("Carrots: " + carrotC);
+        System.out.println("Points: " + point);
+        System.out.println("Rabbit petted : " + rabbitC );
+        System.out.println("                        /) /)\n" +
+"                       ( • ༝•)");
+        System.out.println("Rat seen: " + ratC);
+    }
+
+}
