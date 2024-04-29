@@ -1,4 +1,4 @@
-package rabbitgamepart1;
+package rabbitgamepart1; 
 import java.util.Random;
 import java.util.Scanner;
 
